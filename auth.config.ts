@@ -2,9 +2,9 @@ import type { NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { LoginSchema } from "@/schemas";
+import { loginSchema } from "@/schemas";
 import { getUserByEmail } from "./data/user";
-import bcrypt from "bcryptjs";
+import { compare } from "bcryptjs";
 
 export default {
   providers: [
@@ -19,22 +19,17 @@ export default {
 
     Credentials({
       async authorize(credentials) {
-        console.log("credentials", credentials);
-
-        const validatedFields = LoginSchema.safeParse(credentials);
+        const validatedFields = loginSchema.safeParse(credentials);
 
         if (validatedFields.success) {
           const { email, password } = validatedFields.data;
 
-          console.log("email", email);
-
           const user = await getUserByEmail(email);
-          console.log("user", user);
           if (!user || !user.password) return null;
 
-          const passwordMatch = await bcrypt.compare(password, user.password);
-          console.log("passwordMatch", passwordMatch);
-          if (passwordMatch) return user;
+          const isPassowordValid = await compare(password, user.password);
+
+          if (isPassowordValid) return user;
         }
 
         return null;
@@ -44,34 +39,3 @@ export default {
 } satisfies NextAuthConfig;
 
 // This file is used to trigger middleware, because database adapter not working in edge, but middleware working in edge.
-/**
-  Credentials({
-      async authorize(credentials) {
-        console.log("credentials", credentials);
-
-        const validatedFields = LoginSchema.safeParse(credentials);
-
-        if (validatedFields.success) {
-          const { email, password } = validatedFields.data;
-
-          console.log("email", email);
-
-          try {
-            const user = await getUserByEmail(email);
-            console.log("user", user);
-            if (!user || !user.password) return null;
-
-            const passwordMatch = await bcrypt.compare(password, user.password);
-            console.log("passwordMatch", passwordMatch);
-            if (passwordMatch) return user;
-          } catch (error) {
-            console.log("authorize error", error);
-          }
-        }
-
-        return null;
-      },
-    }),
-    // GitHub,
-    // Google,
- */

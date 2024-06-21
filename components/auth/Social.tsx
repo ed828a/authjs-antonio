@@ -10,9 +10,11 @@ import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 type Props = {};
 
 const Social = (props: Props) => {
-  const onClick = (provider: "google" | "github") => {
-    signIn(provider, { callbackUrl: DEFAULT_LOGIN_REDIRECT });
-  };
+  function onClick(provider: "google" | "github") {
+    signIn(provider, {
+      callbackUrl: DEFAULT_LOGIN_REDIRECT,
+    });
+  }
 
   return (
     <div className="flex items-center w-full gap-x-2">
