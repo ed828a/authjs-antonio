@@ -2,10 +2,11 @@
 
 import { signIn } from "@/auth";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
-import { LoginSchema, loginSchema } from "@/schemas";
+import { loginSchema } from "@/schemas";
 import { AuthError } from "next-auth";
+import * as z from "zod";
 
-export async function login(values: LoginSchema) {
+export async function login(values: z.infer<typeof loginSchema>) {
   const validatedFields = loginSchema.safeParse(values);
 
   if (!validatedFields.success) {

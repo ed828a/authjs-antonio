@@ -5,7 +5,7 @@ export const loginSchema = z.object({
   password: z.string().min(1, { message: "Password is required." }),
 });
 
-export type LoginSchema = z.infer<typeof loginSchema>;
+// export type LoginSchema = z.infer<typeof loginSchema>;
 
 export const registerSchema = z.object({
   email: z.string().email({ message: "Email is required." }),
@@ -15,4 +15,4 @@ export const registerSchema = z.object({
   name: z.string().min(1, "name is required."),
 });
 
-export type RegisterSchema = z.infer<typeof registerSchema>;
+// export type RegisterSchema = z.infer<typeof registerSchema>;

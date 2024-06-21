@@ -12,7 +12,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { RegisterSchema } from "@/schemas";
+import { registerSchema } from "@/schemas";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import FormError from "../FormError";
@@ -28,8 +28,8 @@ const RegisterForm = (props: Props) => {
 
   const [isPending, startTransition] = useTransition();
 
-  const form = useForm<z.infer<typeof RegisterSchema>>({
-    resolver: zodResolver(RegisterSchema),
+  const form = useForm<z.infer<typeof registerSchema>>({
+    resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       password: "",
@@ -37,7 +37,7 @@ const RegisterForm = (props: Props) => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+  const onSubmit = (values: z.infer<typeof registerSchema>) => {
     // reset states
     setError("");
     setSuccess("");
