@@ -53,7 +53,8 @@ const LoginForm = (props: Props) => {
       login(values).then((data) => {
         if (data) {
           setError(data.error);
-          // setSuccess(data.success);
+          // for 2FA use
+          setSuccess(data.success);
         }
       });
     });

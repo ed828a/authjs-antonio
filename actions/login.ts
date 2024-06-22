@@ -1,6 +1,9 @@
 "use server";
 
 import { signIn } from "@/auth";
+import { sendVerificationEmail } from "@/data/mailer";
+import { getUserByEmail } from "@/data/user";
+import { generateVerificaionToken } from "@/lib/tokens";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { loginSchema } from "@/schemas";
 import { AuthError } from "next-auth";
@@ -14,6 +17,23 @@ export async function login(values: z.infer<typeof loginSchema>) {
   }
 
   const { email, password } = validatedFields.data;
+
+  const existingUser = await getUserByEmail(email);
+  if (!existingUser) {
+    return { error: "Please register yourself before logging-in!" };
+  }
+
+  if (!existingUser.password) {
+    return { error: "You were not registered by Credentials!" };
+  }
+
+  if (!existingUser.emailVerified) {
+    const verificaionToken = await generateVerificaionToken(email);
+
+    await sendVerificationEmail(email, verificaionToken.token);
+
+    return { success: "Confirmation email sent! Please check your email." };
+  }
 
   try {
     await signIn("credentials", {
