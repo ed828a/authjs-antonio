@@ -29,6 +29,7 @@ export default auth((req) => {
     return;
   }
 
+  // protected routes
   if (!isLoggedIn && !isPublicRoute) {
     return Response.redirect(new URL("/auth/login", nextUrl));
   }
