@@ -7,6 +7,8 @@ type Props = {};
 const ServerPage = async (props: Props) => {
   const currentUser = await getCurrentUser();
 
+  console.log("currentUser", currentUser);
+
   return <UserInfo user={currentUser} label="🖥️ Server Component" />;
 };
 

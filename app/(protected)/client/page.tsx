@@ -7,6 +7,7 @@ type Props = {};
 
 const ClientPage = (props: Props) => {
   const currentUser = useCurrentUser();
+  console.log("currentUser", currentUser);
   return <UserInfo user={currentUser} label="💻 Client Component" />;
 };
 

@@ -7,6 +7,7 @@ import { UserRole } from "@prisma/client";
 import { generateVerificaionToken } from "./lib/tokens";
 import { sendVerificationEmail } from "./data/mailer";
 import { getTwoFactorConfirmationByUserId } from "./data/two-factor-comfirmation";
+import { getAccountByUserId } from "./data/account";
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db),
@@ -73,6 +74,11 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
         }
 
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
+        // co-response to jwt() data passed
+        session.user.name = token.name;
+        session.user.email = token.email;
+
+        session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
@@ -80,8 +86,17 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async jwt({ token }) {
       if (!token.sub) return token;
       const existingUser = await getUserById(token.sub);
+      console.log("existingUser", existingUser);
 
       if (!existingUser) return token;
+
+      const existingAccount = await getAccountByUserId(existingUser.id);
+
+      token.isOAuth = !!existingAccount;
+
+      // for settings page user update its name, or email.
+      token.name = existingUser.name;
+      token.email = existingUser.email;
 
       token.role = existingUser.role;
       token.isTwofactorEnbalbed = existingUser.isTwoFactorEnabled;
